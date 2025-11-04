@@ -1,0 +1,34 @@
+{
+  "artists": [
+    "Manau", "Lionel D", "Ménélik", "Benny B", "Alliance Ethnik",
+    "Ministère A.M.E.R", "3ème Œil", "Hocus Pocus", "MC Jean Gab'1", "Rockin' Squat",
+    "Lord Kossity", "Mac Tyer", "Salif", "Koba LaD", "Chilla",
+    "Lefa", "Josman", "Dosseh", "Roméo Elvis", "Zola",
+    "Ali", "Pit Baccardi", "Djadja & Dinaz", "Manu Key", "Népal",
+    "La Rumeur", "Caballero & JeanJass", "X-Men", "Kalash", "Georgio",
+    "Hatik", "Oboy", "Shay", "Moha La Squale", "Niro",
+    "Mister You", "Heuss L'enfoiré", "Casey", "Fabe", "Tunisiano",
+    "Gazo", "Nèg'Marrons", "Kalash Criminel", "Gradur", "Alkpote",
+    "Guizmo", "Hugo TSR", "Dinos", "Busta Flex", "Maes",
+    "Sages Poètes de la Rue", "Abd Al Malik", "Rocca", "Hamza", "Soolking",
+    "MHD", "Laylow", "Alonzo", "Saian Supa Crew", "Lacrim",
+    "Stomy Bugsy", "Black M", "Passi", "PLK", "Freeze Corleone",
+    "Rim'K", "Alpha Wann", "Fonky Family", "Médine", "Disiz",
+    "Doc Gynéco", "Sefyu", "La Fouine", "Kaaris", "Keny Arkana",
+    "Bigflo & Oli", "Sofiane", "Niska", "Sinik", "Lino",
+    "Soprano", "Lomepal", "SCH", "Vald", "Youssoupha",
+    "Maître Gims", "Ninho", "Diam's", "Rohff", "Kery James",
+    "Nekfeu", "Jul", "PNL", "Damso", "Oxmo Puccino",
+    "Orelsan", "MC Solaar", "Suprême NTM", "IAM", "Booba"
+  ],
+  "max_songs_per_artist": 50,
+  "rate_limit": {
+    "requests_per_day": 1000,
+    "delay_between_requests": 1.5
+  },
+  "output": {
+    "data_dir": "data",
+    "progress_dir": "progress",
+    "logs_dir": "logs"
+  }
+}
