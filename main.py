@@ -245,12 +245,64 @@ def main():
         logger.error("\n" + "="*60)
         logger.error("ERREUR: Token Genius API non configuré!")
         logger.error("="*60)
-        logger.error("1. Créez un compte sur https://genius.com")
-        logger.error("2. Créez une application API sur https://genius.com/api-clients")
-        logger.error("3. Copiez le 'Client Access Token'")
-        logger.error("4. Créez un fichier .env et ajoutez:")
-        logger.error("   GENIUS_ACCESS_TOKEN=votre_token_ici")
+
+        if not os.path.exists('.env'):
+            logger.error("\nLe fichier .env n'existe pas!")
+            logger.error("\nUtilisez le script de configuration automatique:")
+            logger.error("  python test_api.py setup")
+            logger.error("\nOu créez-le manuellement:")
+            logger.error("  1. Copiez le template: cp .env.example .env")
+            logger.error("  2. Éditez le fichier: nano .env")
+            logger.error("  3. Remplacez 'your_access_token_here' par votre token")
+        else:
+            logger.error("\nLe fichier .env existe mais le token n'est pas configuré!")
+            logger.error("  1. Éditez le fichier .env")
+            logger.error("  2. Remplacez 'your_access_token_here' par votre token")
+
+        logger.error("\nPour obtenir votre token:")
+        logger.error("  1. Allez sur https://genius.com/api-clients")
+        logger.error("  2. Créez une nouvelle application API")
+        logger.error("  3. Copiez le 'Client Access Token'")
+        logger.error("\nPuis testez votre configuration:")
+        logger.error("  python test_api.py")
         logger.error("="*60 + "\n")
+        sys.exit(1)
+
+    # Tester la validité du token
+    logger.info("Vérification de la validité du token API...")
+    import requests
+    try:
+        test_response = requests.get(
+            "https://api.genius.com/search",
+            headers={"Authorization": f"Bearer {access_token}"},
+            params={"q": "test"},
+            timeout=10
+        )
+        if test_response.status_code == 401:
+            logger.error("\n" + "="*60)
+            logger.error("ERREUR: Token API invalide ou expiré!")
+            logger.error("="*60)
+            logger.error("\nLe token dans votre fichier .env n'est pas valide.")
+            logger.error("Code d'erreur HTTP: 401 Unauthorized")
+            logger.error("\nVérifiez que:")
+            logger.error("  1. Vous avez copié le 'Client Access Token' (pas le Client ID)")
+            logger.error("  2. Le token est complet (aucun caractère manquant)")
+            logger.error("  3. Le token n'a pas expiré")
+            logger.error("\nPour obtenir un nouveau token:")
+            logger.error("  1. Allez sur https://genius.com/api-clients")
+            logger.error("  2. Créez ou sélectionnez votre application")
+            logger.error("  3. Générez un nouveau 'Client Access Token'")
+            logger.error("  4. Mettez à jour le fichier .env")
+            logger.error("\nPuis testez avec: python test_api.py")
+            logger.error("="*60 + "\n")
+            sys.exit(1)
+        elif test_response.status_code != 200:
+            logger.warning(f"Avertissement: Réponse API inattendue (code {test_response.status_code})")
+        else:
+            logger.info("✓ Token API valide et fonctionnel")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Erreur lors du test de connexion: {e}")
+        logger.error("Vérifiez votre connexion Internet et réessayez.")
         sys.exit(1)
 
     # Initialiser le rate limiter

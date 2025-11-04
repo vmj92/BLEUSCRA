@@ -40,22 +40,42 @@ cd BLEUSCRA
 pip install -r requirements.txt
 ```
 
-3. **Obtenir un token API Genius**
-   - Créez un compte sur [Genius.com](https://genius.com)
-   - Allez sur [API Clients](https://genius.com/api-clients)
-   - Créez une nouvelle application API
-   - Copiez le **Client Access Token**
+3. **Configurer le token API Genius**
 
-4. **Configurer le token**
+**Option A - Configuration automatique (recommandée):**
 ```bash
-cp .env.example .env
-# Éditez .env et remplacez 'your_access_token_here' par votre token
+python test_api.py setup
 ```
+Le script vous guidera pas à pas pour obtenir et configurer votre token.
+
+**Option B - Configuration manuelle:**
+```bash
+# Copier le template
+cp .env.example .env
+
+# Éditer le fichier
+nano .env  # ou vim .env
+```
+
+Puis obtenez votre token:
+- Allez sur [genius.com/api-clients](https://genius.com/api-clients)
+- Connectez-vous ou créez un compte
+- Cliquez sur "New API Client"
+- Remplissez le formulaire (App Name: BLEUSCRA, App Website: http://localhost)
+- Copiez le **Client Access Token** (⚠️ pas le Client ID!)
+- Collez-le dans le fichier `.env`
 
 Contenu du fichier `.env`:
 ```
 GENIUS_ACCESS_TOKEN=votre_token_ici
 ```
+
+4. **Tester la configuration**
+```bash
+python test_api.py
+```
+
+Si tout fonctionne, vous verrez "✅ SUCCÈS! Connexion à l'API Genius réussie!"
 
 ## 📖 Usage
 
@@ -94,9 +114,11 @@ BLEUSCRA/
 ├── main.py                    # Script principal
 ├── genius_scraper.py          # Module d'interaction avec l'API Genius
 ├── progress_manager.py        # Gestion de la progression
-├── config.json                # Configuration (artistes, paramètres)
-├── requirements.txt           # Dépendances Python
-├── .env                       # Token API (à créer)
+├── test_api.py               # Script de test et configuration API
+├── utils.py                  # Utilitaires et statistiques
+├── config.json               # Configuration (artistes, paramètres)
+├── requirements.txt          # Dépendances Python
+├── .env                      # Token API (à créer)
 ├── .env.example              # Template pour .env
 ├── data/                     # Fichiers JSON de sortie (1 par artiste)
 ├── progress/                 # Fichiers de progression
@@ -229,17 +251,70 @@ Changez `max_songs_per_artist` dans `config.json`.
 
 ## 🐛 Dépannage
 
-### "Token Genius API non configuré"
-- Vérifiez que le fichier `.env` existe et contient votre token
-- Vérifiez que le token est valide sur https://genius.com/api-clients
+### Problème : Erreur "401 Unauthorized" pour tous les artistes
 
-### "Artiste non trouvé"
+**Symptôme:** Les logs montrent `401 Client Error: Unauthorized` pour chaque requête API.
+
+**Cause:** Token API invalide, manquant ou mal configuré.
+
+**Solution:**
+
+1. **Tester votre configuration:**
+   ```bash
+   python test_api.py
+   ```
+
+2. **Si le fichier .env n'existe pas:**
+   ```bash
+   python test_api.py setup
+   # Suivez les instructions interactives
+   ```
+
+3. **Si le token est invalide:**
+   - Allez sur https://genius.com/api-clients
+   - Vérifiez que vous copiez le **Client Access Token** (longue chaîne)
+   - ⚠️ Ne copiez PAS le Client ID ou le Client Secret
+   - Mettez à jour le fichier `.env`
+   - Retestez avec `python test_api.py`
+
+### Problème : "Token Genius API non configuré"
+
+**Solution:**
+- Vérifiez que le fichier `.env` existe : `ls -la .env`
+- Vérifiez qu'il contient votre token : `cat .env`
+- Utilisez `python test_api.py setup` pour une configuration guidée
+
+### Problème : "Artiste non trouvé"
+
+**Cause:** L'artiste n'est pas sur Genius ou le nom est mal orthographié.
+
+**Solution:**
 - Vérifiez l'orthographe exacte du nom dans `config.json`
-- Certains artistes peuvent ne pas être sur Genius
+- Recherchez l'artiste manuellement sur genius.com
+- Si l'artiste existe avec un nom différent, mettez à jour `config.json`
+- Les artistes sans annotations peuvent être marqués comme "non trouvés"
 
-### "Limite quotidienne atteinte"
+### Problème : "Limite quotidienne atteinte"
+
+**Solution:**
 - Le script attend automatiquement jusqu'au jour suivant
-- Réduisez `requests_per_day` dans `config.json` si nécessaire
+- Pas d'action nécessaire, l'extraction reprendra automatiquement
+- Pour réduire la limite : modifiez `requests_per_day` dans `config.json`
+
+### Problème : Le script s'arrête ou crash
+
+**Solution:**
+- Consultez les logs dans `logs/`
+- Vérifiez votre connexion Internet
+- Relancez simplement `python main.py` - il reprendra automatiquement
+- Vérifiez les statistiques : `python main.py --stats`
+
+### Problème : Connexion Internet / Timeout
+
+**Solution:**
+- Le script retry automatiquement après une erreur réseau
+- Si les erreurs persistent, vérifiez votre connexion
+- Augmentez le timeout dans `genius_scraper.py` si nécessaire
 
 ## 📄 Licence
 
